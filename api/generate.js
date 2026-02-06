@@ -3,6 +3,10 @@ const crypto = require('crypto');
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const IV_LENGTH = 16;
 
+if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 32) {
+    throw new Error('ENCRYPTION_KEY must be 32 characters in environment variables');
+}
+
 function encrypt(text) {
     const iv = crypto.randomBytes(IV_LENGTH);
     const cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
@@ -16,7 +20,7 @@ module.exports = (req, res) => {
     if (!webhook) return res.status(400).json({error: 'webhook required'});
     
     const token = encrypt(webhook);
-    const proxyUrl = `https://${req.headers.host}/api/send/${token}`;
+    const proxyUrl = `https://${req.headers.host}/api/send/${encodeURIComponent(token)}`;
     
     res.json({
         token: token,
