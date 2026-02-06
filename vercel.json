@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/send/:token", "destination": "/api/send/[token].js" }
+  ]
+}
